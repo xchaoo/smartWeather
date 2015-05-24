@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.http.HttpEntity;
@@ -46,7 +47,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private boolean flag = false;
 	private String weatherAPIAddress = "http://open.weather.com.cn/data/?";
-	//由于项目应用于公司，故这里的appid和privatekey需要大家去申请。笔者在第一篇博客中讲到了。
 	private static final String APPID = "fd25afc604b5bc73";//秘钥计算之用
 	private static final String AVAILABLE_APPID = "fd25af";//appid前六位http请求时用这个
 	private static final String PRIVATE_Key = "1fa7df_SmartWeatherAPI_3639f0f";//秘钥计算之用
@@ -122,21 +122,21 @@ public class MainActivity extends Activity implements OnClickListener {
 				  //JSONObject  forecast=new JSONObject(response);
 				JSONObject forecast=new JSONObject (jsondata);
 				JSONObject forecast_test=forecast.getJSONObject("c");
-				String city_name=forecast_test.getString("c2");
+				String city_name=forecast_test.getString("c5"); //解析城市名称
 				System.out.println("city_name"+" IS "+ city_name);	
 				
-				JSONObject forecast_ftest=forecast.getJSONObject("f");
-				JSONArray forecast_ftest_array=forecast_ftest.getJSONArray("f1");
-				JSONObject forecast_ftest_array1=forecast_ftest_array.getJSONObject(0);
-				String fd=forecast_ftest_array1.getString("fd");
+				JSONObject forecast_3d=forecast.getJSONObject("f");//
+				JSONArray forecast_f1_array=forecast_3d.getJSONArray("f1");//解析前三天
+				JSONObject forecast_f1fc=forecast_f1_array.getJSONObject(0);//解析第一天
 				
-				System.out.println("ftest_array"+" IS "+ forecast_ftest_array);	
-				System.out.println("forecast_ftest_array1"+" IS "+ forecast_ftest_array1);	
-				System.out.println("wendu"+" IS "+ fd);	
-				
-
-				  
-
+				//ArrayList<String> fcd=new ArrayList<String>();
+				//fcd.add(forecast_f1fc.getString("fc"));//第一天白天
+				//fcd.add(forecast_f1fc.getString("fd"));//第一天晚上
+				String[] fcd=new String[2];
+				fcd[0]=forecast_f1fc.getString("fc");
+				fcd[1]=forecast_f1fc.getString("fd");
+				System.out.println("第一天白天"+" IS "+ fcd[0]);	
+				System.out.println("第一天晚上"+" IS "+ fcd[1]);	
 				
 //=====================================================================
 				/*
@@ -206,8 +206,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				
 				Message msg = handler.obtainMessage();
 				msg.what = 1;
-				msg.obj =city_name;
-				//msg.obj = forecast3dMsg[1];
+				msg.obj =city_name+"白天温度为"+fcd[0]+",晚上温度为"+fcd[1];
 				handler.sendMessage(msg);
 				
 			} catch (MalformedURLException e) {
